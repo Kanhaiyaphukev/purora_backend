@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const db = require('./db');
-const User = require('./User'); // Mongoose model
+const User = require('./user'); // Mongoose model
 
 // Middleware
 app.use(express.json());
