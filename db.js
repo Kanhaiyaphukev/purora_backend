@@ -1,18 +1,19 @@
 const mongoose = require('mongoose');
 
-const mongoURL = 'mongodb+srv://phuke02kanhaiya_db_user:Kanha12345@kpsworkspace.ykeuwnz.mongodb.net/?appName=kpsWorkspace'
+const mongoURL = 'mongodb+srv://phuke02kanhaiya_db_user:Kanha12345@kpsworkspace.ykeuwnz.mongodb.net/mydb?retryWrites=true&w=majority&appName=kpsWorkspace';
 
-mongoose.connect(mongoURL, {
-})
+mongoose.connect(mongoURL)
+    .then(() => {
+        console.log('Connected to MongoDB Server');
+    })
+    .catch((err) => {
+        console.log('MongoDB connection error:', err);
+    });
 
 const db = mongoose.connection;
 
-db.on('connected', () => { console.log('Connected to MongoDB Server'); });
-db.on('error', (err) => {
-    console.log('MongoDB connection error:', err);
+db.on('disconnected', () => {
+    console.log('MongoDB disconnected');
 });
 
-db.on('disconnected', () => { console.log('MongoDB diconnected'); });
-
 module.exports = db;
-
