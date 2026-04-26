@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const mongoURL = 'mongodb+srv://phuke02kanhaiya_db_user:v8SPc7nvq99gC7Zw@kpsworkspace.ykeuwnz.mongodb.net/'
+const mongoURL = 'mongodb+srv://phuke02kanhaiya_db_user:Kanha12345@kpsworkspace.ykeuwnz.mongodb.net/?appName=kpsWorkspace'
 
 mongoose.connect(mongoURL, {
 })
