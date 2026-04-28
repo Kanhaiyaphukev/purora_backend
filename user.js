@@ -10,8 +10,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  mobile: {
+    type: Number,
+    required: true
+  },
   age: {
     type: Number,
+    required: true
+  },
+  avatar: {
+    type: String,
     required: true
   }
 });

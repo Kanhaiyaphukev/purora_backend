@@ -5,7 +5,7 @@ const db = require('./db');
 const User = require('./user'); // Mongoose model
 
 // Middleware
-app.use(cors()); // Allow all origins
+app.use(cors());
 app.use(express.json());
 
 // Root route for Render testing
@@ -16,10 +16,17 @@ app.get('/', (req, res) => {
 // GET all users
 app.get('/users', async (req, res) => {
   try {
-    const users = await User.find().sort({ id: 1 }); // ascending order
-    res.json(users);
+    const users = await User.find().sort({ id: 1 });
+
+    res.json({
+      message: 'Users fetched successfully',
+      data: users
+    });
+
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({
+      message: err.message
+    });
   }
 });
 
@@ -29,12 +36,20 @@ app.get('/users/:id', async (req, res) => {
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.status(404).json({
+        message: 'User not found'
+      });
     }
 
-    res.json(user);
+    res.json({
+      message: 'User fetched successfully',
+      data: user
+    });
+
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({
+      message: err.message
+    });
   }
 });
 
@@ -44,14 +59,22 @@ app.post('/users', async (req, res) => {
     const newUser = new User({
       id: req.body.id,
       user: req.body.user,
-      age: req.body.age
+      mobile: req.body.mobile,
+      age: req.body.age,
+      avatar: req.body.avatar
     });
 
     const savedUser = await newUser.save();
-    res.status(201).json(savedUser);
+
+    res.status(201).json({
+      message: 'User added successfully',
+      data: savedUser
+    });
 
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({
+      message: err.message
+    });
   }
 });
 
@@ -65,13 +88,20 @@ app.put('/users/:id', async (req, res) => {
     );
 
     if (!updatedUser) {
-      return res.status(404).send('User not found');
+      return res.status(404).json({
+        message: 'User not found'
+      });
     }
 
-    res.json(updatedUser);
+    res.json({
+      message: 'User updated successfully',
+      data: updatedUser
+    });
 
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({
+      message: err.message
+    });
   }
 });
 
@@ -81,16 +111,20 @@ app.delete('/users/:id', async (req, res) => {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
 
     if (!deletedUser) {
-      return res.status(404).send('User not found');
+      return res.status(404).json({
+        message: 'User not found'
+      });
     }
 
     res.json({
       message: 'User deleted successfully',
-      deletedUser
+      data: deletedUser
     });
 
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({
+      message: err.message
+    });
   }
 });
 
