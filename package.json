@@ -9,7 +9,7 @@
   "author": "Kanhaiya Phuke",
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5",
+    "cors": "^2.8.6",
     "express": "^5.1.0",
     "loadash": "^1.0.0",
     "mongoose": "^8.17.1"

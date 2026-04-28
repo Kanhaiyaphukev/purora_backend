@@ -1,17 +1,17 @@
 const express = require('express');
+const cors = require('cors'); // CORS for all origins
 const app = express();
 const db = require('./db');
 const User = require('./user'); // Mongoose model
 
 // Middleware
+app.use(cors()); // Allow all origins
 app.use(express.json());
-
 
 // Root route for Render testing
 app.get('/', (req, res) => {
   res.send("API is running successfully");
 });
-
 
 // GET all users
 app.get('/users', async (req, res) => {
@@ -23,8 +23,7 @@ app.get('/users', async (req, res) => {
   }
 });
 
-
-// GET user by _id
+// GET user by MongoDB _id
 app.get('/users/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -39,7 +38,6 @@ app.get('/users/:id', async (req, res) => {
   }
 });
 
-
 // POST: Add new user
 app.post('/users', async (req, res) => {
   try {
@@ -50,21 +48,20 @@ app.post('/users', async (req, res) => {
     });
 
     const savedUser = await newUser.save();
-    res.json(savedUser);
+    res.status(201).json(savedUser);
 
   } catch (err) {
     res.status(500).send(err.message);
   }
 });
 
-
-// PUT: Update user by _id
+// PUT: Update user by MongoDB _id
 app.put('/users/:id', async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true, runValidators: true }
     );
 
     if (!updatedUser) {
@@ -78,8 +75,7 @@ app.put('/users/:id', async (req, res) => {
   }
 });
 
-
-// DELETE: Remove user by _id
+// DELETE: Remove user by MongoDB _id
 app.delete('/users/:id', async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
@@ -98,9 +94,8 @@ app.delete('/users/:id', async (req, res) => {
   }
 });
 
-
 // Render deployment port fix
-const PORT = process.env.PORT || 45;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
