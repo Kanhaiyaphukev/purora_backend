@@ -15,10 +15,10 @@ app.get('/', (req, res) => {
 });
 
 
-// GET - All Users
+/// GET - All Users
 app.get('/users', async (req, res) => {
   try {
-    const users = await User.find().sort({ id: 1 });
+    const users = await User.find().sort({ srno: 1 });
 
     res.status(200).json({
       success: true,
@@ -36,10 +36,10 @@ app.get('/users', async (req, res) => {
 });
 
 
-// GET - Single User by MongoDB _id
-app.get('/users/:id', async (req, res) => {
+// GET - Single User by srno
+app.get('/users/:srno', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findOne({ srno: req.params.srno });
 
     if (!user) {
       return res.status(404).json({
@@ -66,39 +66,39 @@ app.get('/users/:id', async (req, res) => {
 // POST - Add New User
 app.post('/addUser', async (req, res) => {
   try {
-    const { id, user, mobile, age, avatar } = req.body;
+    const { user, mobile, age, avatar } = req.body;
 
-    // Validation
-    if (!id || !user || !mobile || !age || !avatar) {
+
+    let missingFields = [];
+
+    if (!user) missingFields.push("User Name");
+    if (!mobile) missingFields.push("Mobile Number");
+    if (!age) missingFields.push("Age");
+
+    if (missingFields.length > 0) {
       return res.status(400).json({
         success: false,
-        message: 'All fields are required'
+        message: `Missing required field(s): ${missingFields.join(", ")}`
       });
     }
 
-    // Duplicate check using custom id
-    const existingUser = await User.findOne({ id });
+    const lastUser = await User.findOne().sort({ srno: -1 });
 
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: 'User with this ID already exists'
-      });
-    }
+    const newSrno = lastUser ? lastUser.srno + 1 : 1;
 
     const newUser = new User({
-      id,
+      srno: newSrno,
       user,
       mobile,
       age,
-      avatar
+      avatar: avatar || ""
     });
 
     const savedUser = await newUser.save();
 
     res.status(201).json({
       success: true,
-      message: 'User added successfully',
+      message: "User added successfully",
       data: savedUser
     });
 
@@ -111,12 +111,33 @@ app.post('/addUser', async (req, res) => {
 });
 
 
-// PUT - Update User
-app.put('/updateUser/:id', async (req, res) => {
+// PUT - Update User by srno
+app.put('/updateUser/:srno', async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      req.body,
+    const { user, mobile, age, avatar } = req.body;
+
+    // Check missing required fields
+    let missingFields = [];
+
+    if (!user) missingFields.push("User Name");
+    if (!mobile) missingFields.push("Mobile Number");
+    if (!age) missingFields.push("Age");
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Missing required field(s): ${missingFields.join(", ")}`
+      });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { srno: req.params.srno },
+      {
+        user,
+        mobile,
+        age,
+        avatar: avatar || ""
+      },
       {
         new: true,
         runValidators: true
@@ -144,11 +165,12 @@ app.put('/updateUser/:id', async (req, res) => {
   }
 });
 
-
-// DELETE - Remove User
-app.delete('/deleteUser/:id', async (req, res) => {
+// DELETE - Remove User by srno
+app.delete('/deleteUser/:srno', async (req, res) => {
   try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    const deletedUser = await User.findOneAndDelete({
+      srno: req.params.srno
+    });
 
     if (!deletedUser) {
       return res.status(404).json({
@@ -170,7 +192,6 @@ app.delete('/deleteUser/:id', async (req, res) => {
     });
   }
 });
-
 
 // Server Start
 const PORT = process.env.PORT || 3000;
