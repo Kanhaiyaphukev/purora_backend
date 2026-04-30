@@ -8,12 +8,17 @@ const userSchema = new mongoose.Schema({
   },
   mobile: {
     type: Number,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
     required: true
   },
-  age: {
-    type: Number,
-    required: true,
-    min: 0
+  role: {
+    type: String,
+    enum: ['admin', 'customer'],
+    default: 'customer'
   },
   avatar: {
     type: String,
