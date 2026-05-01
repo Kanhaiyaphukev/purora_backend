@@ -45,7 +45,7 @@ exports.getDashboard = async (req, res) => {
   }
 };
 
-// UPLOAD AVATAR
+// AVATAR UPLOAD
 exports.uploadAvatar = async (req, res) => {
   try {
     if (!req.file) {
@@ -55,7 +55,8 @@ exports.uploadAvatar = async (req, res) => {
       });
     }
 
-    const avatarUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    //Cloudinary URL
+    const avatarUrl = req.file.path;
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
