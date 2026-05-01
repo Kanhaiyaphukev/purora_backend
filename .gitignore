@@ -1,3 +1,4 @@
 node_modules/
 .env
 uploads/
+purora_api_docs.md
