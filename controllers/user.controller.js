@@ -81,16 +81,25 @@ exports.uploadAvatar = async (req, res) => {
 
 exports.getProductList = async (req, res) => {
   try {
+    console.log("PRODUCT API CALLED");
+
     const response = await fetch("https://fakestoreapi.com/products");
 
-    // Check third-party API response
+    console.log("THIRD PARTY STATUS:", response.status);
+
     if (!response.ok) {
+      const errorData = await response.text();
+
+      console.log("THIRD PARTY ERROR:", errorData);
+
       return res.status(response.status).json({
         success: false,
         message: "Failed to fetch products from third-party API"
       });
     }
+
     const resData = await response.json();
+
     return res.status(200).json({
       success: true,
       message: "Products List Fetched Successfully",
@@ -98,6 +107,8 @@ exports.getProductList = async (req, res) => {
     });
 
   } catch (error) {
+    console.error("PRODUCT API ERROR:", error);
+
     return res.status(500).json({
       success: false,
       message: "Internal Server Error"
