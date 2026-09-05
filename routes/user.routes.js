@@ -21,6 +21,9 @@ router.get('/dashboard', auth, userController.getDashboard);
 // 🔐 UPLOAD AVATAR
 router.post('/avatar', auth, upload.single('avatar'), userController.uploadAvatar);
 
+// 🔐 Products List
+router.get('/products', auth, userController.getProductList);
+
 
 // 🔒 ADMIN - USER MANAGEMENT
 router.get('/customers', auth, roleCheck('admin'), adminController.getCustomers);
